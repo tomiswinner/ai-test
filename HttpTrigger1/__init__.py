@@ -116,15 +116,15 @@ def docsearch():
     try:
         impl = chat_approaches.get(approach)
         if not impl:
-            return jsonify({"error": "unknown approach"}), 400
+            return json.dumps({"error": "unknown approach"}), 400
         # r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, request.json["history"], overrides)
         r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, [{"user": "すね毛"}], overrides)
 
-        return json.dumps(r)
+        return json.dumps(r), 200
 
     except Exception as e:
         write_error("docsearch", user_name, str(e))
-        return jsonify({"error": str(e)}), 500
+        return json.dumps({"error": str(e)}), 500
     
     
 def ensure_openai_token():
@@ -142,8 +142,8 @@ def ensure_openai_token():
 def main(req: func.HttpRequest) -> func.HttpResponse:
     
     try:
-        response = docsearch() # Assuming docsearch handles the request
-        return func.HttpResponse(body=json.dumps(response), status_code=200, mimetype="application/json")
+        response, status_code = docsearch() # Assuming docsearch handles the request
+        return func.HttpResponse(body=response, status_code=status_code, mimetype="application/json")
 
     except Exception as e:
         return func.HttpResponse(str(e), status_code=500)

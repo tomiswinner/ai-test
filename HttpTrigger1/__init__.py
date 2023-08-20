@@ -95,9 +95,17 @@ chat_approaches = {
 
 def docsearch():
     ensure_openai_token()
-    approach = request.json["approach"]
+    # approach = request.json["approach"]
+    approach = "rrr"
     user_name = get_user_name(request)
-    overrides = request.json.get("overrides")
+    # overrides = request.json.get("overrides")
+    overrides = {
+        "gptModel": "text-davinci-003",
+        "semanticCaptions": True,
+        "semanticRanker": True,
+        "temperature": "0.0",
+        "top": 5,
+    }
 
     selected_model_name = overrides.get("gptModel")
 
@@ -108,7 +116,9 @@ def docsearch():
         impl = chat_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, request.json["history"], overrides)
+        # r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, request.json["history"], overrides)
+        r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, [{"user": "すね毛"}], overrides)
+
         return jsonify(r)
     except Exception as e:
         write_error("docsearch", user_name, str(e))

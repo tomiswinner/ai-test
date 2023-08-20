@@ -6,6 +6,7 @@ import time
 import mimetypes
 import urllib.parse
 from flask import Flask, request, jsonify
+import json
 
 import tiktoken
 import openai
@@ -119,7 +120,8 @@ def docsearch():
         # r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, request.json["history"], overrides)
         r = impl.run(selected_model_name, gpt_chat_model, gpt_completion_model, user_name, [{"user": "すね毛"}], overrides)
 
-        return jsonify(r)
+        return json.dumps(r)
+
     except Exception as e:
         write_error("docsearch", user_name, str(e))
         return jsonify({"error": str(e)}), 500
@@ -141,6 +143,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     
     try:
         response = docsearch() # Assuming docsearch handles the request
-        return func.HttpResponse(body=response.get_data(), status_code=response.status_code, mimetype="application/json")
+        return func.HttpResponse(body=json.dumps(response), status_code=200, mimetype="application/json")
+
     except Exception as e:
         return func.HttpResponse(str(e), status_code=500)

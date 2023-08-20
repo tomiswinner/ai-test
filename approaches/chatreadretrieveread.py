@@ -1,5 +1,5 @@
 import json
-from text import nonewlines
+from .text import nonewlines
 import openai
 from approaches.approach import Approach
 from approaches.chatlogging import write_chatlog, ApproachType
